@@ -1,9 +1,5 @@
 # **Traffic Sign Recognition**
 
-## Writeup Template
-
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
 **Build a Traffic Sign Recognition Project**
@@ -45,9 +41,6 @@ The goals / steps of this project are the following:
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-### Writeup / README
-
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
 
 You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
 
@@ -61,7 +54,7 @@ I used the numpy library to calculate the following summary statistics of the tr
 
 - 34'799 training examples
 - 12'630 testing examples.
-- The images are of the (32, 32, 3).
+- The images are 32 pixels wide and high, and contain three channels (RGB)
 - There are 43 unique classes in the set.
 
 #### 2. Include an exploratory visualization of the dataset and identify where the code is in your code file.
@@ -72,9 +65,9 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 
 ![alt text][class_counts]
 
-###Design and Test a Model Architecture
+### Design and Test a Model Architecture
 
-####1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
+#### 1. Describe how, and identify where in your code, you preprocessed the image data. What tecniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc.
 
 The code for this step is contained in the "Pre-process the Data Set" section of the IPython notebook.
 
@@ -100,9 +93,9 @@ Here is an example of the preprocessing
 
 Fortuantly splitting the code into training, validation and test data was not necessary, as the dataset provided by Udacity had already been split up!
 
-Augmenting the dataset was explored, particularly rotating and translating the dataset, but after reviewing the forums, it was found that augmentation was not necessary to achieve the desired validation rate, and the decision was made to focus efforts on improving the model.
+Augmenting the dataset, focusing on rotation and translation, was explored, but after ultimately dropped, after it was found to reduce accuracy. Instead I decided to focus on improving the model design.
 
-####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+#### 3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
 The code for my final model is located in the "Model Architecture" section of the ipython notebook.
 
@@ -126,37 +119,34 @@ My final model consisted of the following layers:
 | RELU | |
 | Fully Connected | Outputs 43 |
 
-####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+#### 4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-The code for training the model is located in the "Train, Validate and Test the Model" section of the ipython notebook.
+The code for training the model is located in the "Train, Validate and Test the Model" section of the iPython notebook.
 
 To train the model, I used an Adam Optimizer with a base learning rate of 0.001, over 25 epochs and a batch size of 128. Mu and sigma were set to 0 and 0.1 respectively, while dropout was set to 25% for all dropout layers.
 
-####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+#### 5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
-The code for calculating the accuracy of the model is located in the ninth cell of the Ipython notebook.
+The code for calculating the accuracy of the model is located in the "Analyze Performance" section of the Ipython notebook.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ?
-* test set accuracy of ?
+* training set loss of 0.003
+* validation set accuracy of exactly 93%
+* test set accuracy of 75%
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to over fitting or under fitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+I first attempted to reuse the LeNet architecture that was used in the previous labs, but did not get a sufficiently high validation set accuracy.
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+After some research, I attempted to reimplement Google's inception model. Unfortuantly I was unable to successfully achieve model convergance in a timely manner (45% validation accuracy at 5 minutes on a GTX 970).  
 
+Eventually I decided to go back to the LeNet model and attempt to modify it to acheive greater results.
 
-###Test a Model on New Images
+These modifications included adding dropout (in order to aid generalization) and maxpooling layers (in order to reduce the parameter count and increase training speed).  
 
-####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+Using the LeNet model was a good choice. It's simplicity means I could train and run it quickly, allowing me to iterate on the design quickly. It was a good fit to the traffic sign application as it was originally designed for MNIST, a similiar image recognition challenge on a relatively small number of classes. The fact that it is able to achieve a 93% validation accuracy is a sign that it works well.
+
+### Test a Model on New Images
+
+#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
 Here are eight German traffic signs that I found on the web:
 
@@ -169,9 +159,23 @@ Here are eight German traffic signs that I found on the web:
 ![alt text][cropped_img_7]
 ![a][cropped_img_8]
 
-The first image might be difficult to classify because ...
+The first image is a relatively simple one.
 
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+The second image is missing the bottom of the sign. This might stress the network if it cant find a perfect circle.
+
+The third image has a water mark.
+
+The fourth image has a very slight upward tilt.
+
+The fifth image is also a relatively easy one.
+
+The sixth image has a large amount of glare on the sign
+
+The seventh image has a watermark on the image.
+
+The eighth image has a small amount of glare, and a watermark.  
+
+#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
 The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
 
